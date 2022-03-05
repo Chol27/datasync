@@ -1,0 +1,5 @@
+time curl -o /dev/null http://localhost:4000/api/messages
+
+# insert many simple messages with number as params
+time curl -X POST -o /dev/null http://localhost:4000/api/messages/multiple/100000
+
