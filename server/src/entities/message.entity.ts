@@ -1,19 +1,17 @@
 import {
   AfterInsert,
-  BaseEntity,
   BeforeInsert,
   Column,
   Entity,
   Index,
   JoinColumn,
-  OneToMany,
   OneToOne,
   PrimaryColumn,
 } from 'typeorm';
 import { Action, ActionEnum } from './action.entity';
 
 @Entity()
-export class Message extends BaseEntity {
+export class Message {
   @PrimaryColumn('char', { length: 36 })
   uuid: string;
 
@@ -26,16 +24,21 @@ export class Message extends BaseEntity {
   @Column()
   like: number;
 
-  @Index()
+  @Index('create_action_id_idx')
+  @Column()
+  createActionId: number;
+
+  @Index('latest_action_id_idx')
   @OneToOne(() => Action)
   @JoinColumn()
-  latestAction?: Action;
+  latestAction: Action;
 
   @BeforeInsert()
   async insertActionForCreate() {
     const action = await Action.save(
       Action.create({ actionType: ActionEnum.Create }),
     );
+    this.createActionId = action.id;
     this.latestAction = action;
   }
 

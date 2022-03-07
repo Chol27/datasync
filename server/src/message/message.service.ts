@@ -17,13 +17,13 @@ export class MessageService {
     return this.messageRepo.find({ relations: ['latestAction'] });
   }
 
-  findById(uuid: string): Promise<Message> {
-    const message = this.messageRepo.findOne({ uuid });
+  async findById(uuid: string): Promise<Message> {
+    const message = await this.messageRepo.findOne({ uuid });
     if (!message) throw new BadRequestException();
     return message;
   }
 
-  async create(dto: Partial<Message>): Promise<Message> {
+  create(dto: Partial<Message>): Promise<Message> {
     return this.messageRepo.save(this.messageRepo.create(dto));
   }
 
@@ -42,6 +42,7 @@ export class MessageService {
       message: 'messages' + uuid,
       like: id,
       latestAction: action,
+      createActionId: action.id,
     });
     return message;
   }

@@ -1,0 +1,10 @@
+function getEnv(){
+    echo $(grep $1 .env | cut -d '=' -f2 | tr '[:upper:]' '[:lower:]')
+}
+
+mode=$(getEnv MODE)
+database=$(getEnv POSTGRES_DATABASE)
+username=$(getEnv POSTGRES_USERNAME)
+export PGPASSWORD=$(getEnv POSTGRES_PASSWORD)
+psql -d $database -U $username < src.$mode.sql
+nest start --watch
