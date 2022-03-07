@@ -31,8 +31,8 @@ export class MessageService {
   }
 
   async update(uuid: string, dto: Partial<Message>): Promise<Message> {
-    const message = await this.findById(uuid);
-    return this.messageRepo.save({ ...message, dto });
+    const message = Object.assign(await this.findById(uuid), dto);
+    return this.messageRepo.save(message);
   }
 
   /*

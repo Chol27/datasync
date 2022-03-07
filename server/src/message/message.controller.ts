@@ -23,8 +23,11 @@ export class MessageController {
     return this.messageService.create(dto);
   }
 
-  @Put()
-  update(@Param('uuid') uuid: string, dto: Partial<Message>): Promise<Message> {
+  @Put(':uuid')
+  update(
+    @Param('uuid') uuid: string,
+    @Body() dto: Partial<Message>,
+  ): Promise<Message> {
     return this.messageService.update(uuid, dto);
   }
 
