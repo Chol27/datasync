@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ActionService } from 'src/action/action.service';
 import { Message } from 'src/entities/message.entity';
@@ -18,13 +18,19 @@ export class MessageService {
   }
 
   findById(uuid: string): Promise<Message> {
-    return this.messageRepo.findOne({ uuid });
+    const message = this.messageRepo.findOne({ uuid });
+    if (!message) throw new BadRequestException();
+    return message;
   }
 
   async create(dto: Partial<Message>): Promise<Message> {
-    const message = this.messageRepo.create(dto);
-    return this.messageRepo.save(message);
+    return this.messageRepo.save(this.messageRepo.create(dto));
   }
+
+  /*
+   * Below function is for testing purpose.
+   *
+   */
 
   async createByActionId(): Promise<Message> {
     const action = await this.actionService.create(ActionEnum.Create);

@@ -1,6 +1,7 @@
 import {
   AfterInsert,
   BaseEntity,
+  BeforeInsert,
   Column,
   Entity,
   Index,
@@ -9,7 +10,7 @@ import {
   OneToOne,
   PrimaryColumn,
 } from 'typeorm';
-import { Action } from './action.entity';
+import { Action, ActionEnum } from './action.entity';
 
 @Entity()
 export class Message extends BaseEntity {
@@ -30,9 +31,16 @@ export class Message extends BaseEntity {
   @JoinColumn()
   latestAction?: Action;
 
+  @BeforeInsert()
+  async insertActionForCreate() {
+    const action = await Action.save(
+      Action.create({ actionType: ActionEnum.Create }),
+    );
+    this.latestAction = action;
+  }
+
   @AfterInsert()
   async setCurrentActionForMessage() {
-    console.log('enter');
     await Action.findByCurrentActionAndUpdate(this);
   }
 }
