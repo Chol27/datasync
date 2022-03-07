@@ -1,4 +1,10 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  Index,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Message } from './message.entity';
 
 export enum ActionEnum {
@@ -15,6 +21,7 @@ export class Action extends BaseEntity {
   @Column({ nullable: true })
   message: string;
 
+  @Index('action_type_idx')
   @Column()
   actionType: ActionEnum;
 
