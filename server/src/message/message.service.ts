@@ -14,7 +14,10 @@ export class MessageService {
   ) {}
 
   findAll(): Promise<Message[]> {
-    return this.messageRepo.find({ relations: ['latestAction'] });
+    return this.messageRepo.find({
+      relations: ['latestAction'],
+      order: { latestAction: 'ASC' },
+    });
   }
 
   async findById(uuid: string): Promise<Message> {
@@ -25,6 +28,11 @@ export class MessageService {
 
   create(dto: Partial<Message>): Promise<Message> {
     return this.messageRepo.save(this.messageRepo.create(dto));
+  }
+
+  async update(uuid: string, dto: Partial<Message>): Promise<Message> {
+    const message = await this.findById(uuid);
+    return this.messageRepo.save({ ...message, dto });
   }
 
   /*

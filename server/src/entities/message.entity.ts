@@ -1,6 +1,8 @@
 import {
   AfterInsert,
+  AfterUpdate,
   BeforeInsert,
+  BeforeUpdate,
   Column,
   Entity,
   Index,
@@ -36,14 +38,17 @@ export class Message {
   @BeforeInsert()
   async insertActionForCreate() {
     const action = await Action.save(
-      Action.create({ actionType: ActionEnum.Create }),
+      Action.create({ message: this.uuid, actionType: ActionEnum.Create }),
     );
     this.createActionId = action.id;
     this.latestAction = action;
   }
 
-  @AfterInsert()
-  async setCurrentActionForMessage() {
-    await Action.findByCurrentActionAndUpdate(this);
+  @BeforeUpdate()
+  async insertActionForUpdate() {
+    const action = await Action.save(
+      Action.create({ message: this.uuid, actionType: ActionEnum.Update }),
+    );
+    this.latestAction = action;
   }
 }

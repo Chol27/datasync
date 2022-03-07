@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { MessageService } from './message.service';
 import { Message } from 'src/entities/message.entity';
 
@@ -13,6 +21,11 @@ export class MessageController {
   @Post()
   create(@Body() dto: Partial<Message>): Promise<Message> {
     return this.messageService.create(dto);
+  }
+
+  @Put()
+  update(@Param('uuid') uuid: string, dto: Partial<Message>): Promise<Message> {
+    return this.messageService.update(uuid, dto);
   }
 
   /*
