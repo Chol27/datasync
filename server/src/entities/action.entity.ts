@@ -22,7 +22,7 @@ export class Action extends BaseEntity {
   message: string;
 
   @Index('action_type_idx')
-  @Column()
+  @Column({ type: 'enum', enum: ActionEnum })
   actionType: ActionEnum;
 
   static async findByCurrentActionAndUpdate(message: Message) {
