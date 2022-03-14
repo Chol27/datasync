@@ -6,6 +6,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { MessageModule } from './message/message.module';
 import { ConfigModule } from '@nestjs/config';
 import { ActionModule } from './action/action.module';
+import { MessageBatchModule } from './message-batch/message-batch.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ActionModule } from './action/action.module';
     }),
     MessageModule,
     ActionModule,
+    MessageBatchModule,
   ],
   controllers: [AppController],
   providers: [AppService],
