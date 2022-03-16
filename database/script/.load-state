@@ -10,4 +10,4 @@ export PGPASSWORD=$(getEnv POSTGRES_PASSWORD)
 dropdb -h localhost -p $port -U $username $database
 createdb -h localhost -p $port -U $username $database
 
-psql -d datasync -f ./../seed-data/backup.sql
+psql -d $database -f ./seed-data/${1}
