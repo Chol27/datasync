@@ -7,7 +7,11 @@ export class TextMessageBatch extends MessageBatch {
 
   @BeforeInsert()
   async deLatest() {
-    const oldBatch = await TextMessageBatch.findOne({ isLatest: true });
+    const { messageCreateActionId } = this;
+    const oldBatch = await TextMessageBatch.findOne({
+      isLatest: true,
+      messageCreateActionId,
+    });
     if (oldBatch) {
       TextMessageBatch.update(oldBatch.actionId, { isLatest: false });
     }

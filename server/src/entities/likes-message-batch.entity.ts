@@ -7,7 +7,11 @@ export class LikesMessageBatch extends MessageBatch {
 
   @BeforeInsert()
   async deLatest() {
-    const oldBatch = await LikesMessageBatch.findOne({ isLatest: true });
+    const { messageCreateActionId } = this;
+    const oldBatch = await LikesMessageBatch.findOne({
+      isLatest: true,
+      messageCreateActionId,
+    });
     if (oldBatch) {
       LikesMessageBatch.update(oldBatch.actionId, { isLatest: false });
     }
