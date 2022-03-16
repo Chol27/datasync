@@ -1,0 +1,13 @@
+function getEnv(){
+    echo $(grep $1 .env | cut -d '=' -f2 | tr '[:upper:]' '[:lower:]')
+}
+
+database=$(getEnv POSTGRES_DATABASE)
+username=$(getEnv POSTGRES_USERNAME)
+port=$(getEnv POSTGRES_PORT)
+export PGPASSWORD=$(getEnv POSTGRES_PASSWORD)
+
+dropdb -h localhost -p $port -U $username $database
+createdb -h localhost -p $port -U $username $database
+
+psql -d datasync -f ./../seed-data/backup.sql
