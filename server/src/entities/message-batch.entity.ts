@@ -1,4 +1,10 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  BeforeInsert,
+  Column,
+  Entity,
+  PrimaryColumn,
+} from 'typeorm';
 
 export enum UpdatedColumnEnum {
   Author = 'author',
@@ -7,7 +13,7 @@ export enum UpdatedColumnEnum {
 }
 
 @Entity()
-export class MessageBatch {
+export class MessageBatch extends BaseEntity {
   @PrimaryColumn()
   actionId: number;
 
