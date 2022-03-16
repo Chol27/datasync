@@ -4,6 +4,7 @@ import { ActionService } from 'src/action/action.service';
 import { Message } from 'src/entities/message.entity';
 import { ActionEnum } from 'src/entities/action.entity';
 import { Repository } from 'typeorm';
+import { UpdatedColumnEnum } from 'src/entities/message-batch.entity';
 
 @Injectable()
 export class MessageService {
@@ -15,7 +16,7 @@ export class MessageService {
 
   findAll(): Promise<Message[]> {
     return this.messageRepo.find({
-      relations: ['latestAction'],
+      relations: ['createActionId'],
       order: { latestAction: 'ASC' },
     });
   }
@@ -48,7 +49,7 @@ export class MessageService {
       uuid: uuid,
       author: 'author' + uuid,
       message: 'messages' + uuid,
-      like: id,
+      likes: id,
       latestAction: action,
       createActionId: action.id,
     });

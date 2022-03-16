@@ -25,7 +25,7 @@ export class Action extends BaseEntity {
   @Column({ type: 'enum', enum: ActionEnum })
   actionType: ActionEnum;
 
-  static async findByCurrentActionAndUpdate(message: Message) {
+  static findByCurrentActionAndUpdate(message: Message) {
     return this.createQueryBuilder()
       .update(Action)
       .set({ message: message.uuid })
