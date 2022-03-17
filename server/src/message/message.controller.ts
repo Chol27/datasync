@@ -1,14 +1,14 @@
 import {
-  Body,
   Controller,
-  Delete,
-  Get,
+  Body,
   Param,
+  Get,
   Post,
   Put,
+  Delete,
   Res,
 } from '@nestjs/common';
-import { MessageService } from './message.service';
+import { MessageService, NewUpdateDTO } from './message.service';
 import { Message } from 'src/entities/message.entity';
 import { Response } from 'express';
 
@@ -20,24 +20,44 @@ export class MessageController {
     return this.messageService.findAll();
   }
 
+  @Get(':latestActionId')
+  findByLatestActionId(
+    @Param('latestActionId') latestActionId: number,
+  ): Promise<NewUpdateDTO> {
+    return this.messageService.findByLatestActionId(latestActionId);
+  }
+
   @Post()
-  create(@Body() dto: Partial<Message>): Promise<Message> {
-    return this.messageService.create(dto);
+  async create(@Body() dto: Omit<Message, 'createActionId'>): Promise<Message> {
+    try {
+      return await this.messageService.create(dto);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Put(':uuid')
-  update(
+  async update(
     @Param('uuid') uuid: string,
     @Body() dto: Partial<Message>,
-  ): Promise<Message> {
-    return this.messageService.update(uuid, dto);
+    @Res() res: Response,
+  ): Promise<void> {
+    try {
+      await this.messageService.update(uuid, dto);
+      res.status(204).json();
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Delete(':uuid')
-  async delete(@Param('uuid') uuid: string, @Res() res: Response) {
+  async delete(
+    @Param('uuid') uuid: string,
+    @Res() res: Response,
+  ): Promise<void> {
     try {
       await this.messageService.delete(uuid);
-      return res.status(204).json();
+      res.status(204).json();
     } catch (error) {
       throw error;
     }

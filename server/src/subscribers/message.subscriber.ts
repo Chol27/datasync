@@ -46,16 +46,18 @@ export class MessageSubscriber implements EntitySubscriberInterface<Message> {
 
   async beforeInsert(event: InsertEvent<Message>): Promise<void> {
     const message = event.entity;
-    const { uuid } = message;
-    const action = await this.actionService.create(uuid, ActionEnum.Create);
+    const action = await this.actionService.create(ActionEnum.Create);
     message.createActionId = action.id;
     message.latestAction = action;
   }
 
   async beforeUpdate(event: UpdateEvent<Message>): Promise<void> {
     const message = event.entity;
-    const { uuid, createActionId } = message;
-    const action = await this.actionService.create(uuid, ActionEnum.Update);
+    const { createActionId } = message;
+    const action = await this.actionService.create(
+      ActionEnum.Update,
+      createActionId,
+    );
     message.latestAction = action;
 
     const actionId = action.id;
@@ -77,8 +79,8 @@ export class MessageSubscriber implements EntitySubscriberInterface<Message> {
 
   beforeRemove(event: RemoveEvent<Message>): void {
     const message = event.entity;
-    const { uuid, createActionId } = message;
-    this.actionService.create(uuid, ActionEnum.Delete);
+    const { createActionId } = message;
+    this.actionService.create(ActionEnum.Delete, createActionId);
     batchTypes.forEach((bt) => {
       this.messageBatchService.updateLatest(bt, createActionId);
     });

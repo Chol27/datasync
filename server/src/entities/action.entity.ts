@@ -12,7 +12,7 @@ export class Action {
   id: number;
 
   @Column({ nullable: true })
-  message: string;
+  messageCreateId: number;
 
   @Index('action_type_idx')
   @Column({ type: 'enum', enum: ActionEnum })

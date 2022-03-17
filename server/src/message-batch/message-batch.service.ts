@@ -3,13 +3,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AuthorMessageBatch } from 'src/entities/author-message-batch.entity';
 import { LikesMessageBatch } from 'src/entities/likes-message-batch.entity';
 import { TextMessageBatch } from 'src/entities/text-message-batch.entity';
-import { Repository } from 'typeorm';
+import { LessThanOrEqual, Repository } from 'typeorm';
 
 export type MessageBatchCreateDTO = {
   batchType: string;
   actionId: number;
   messageCreateActionId: number;
   updatedValue: string | number;
+};
+
+export type NewBatchDTO = {
+  author: Partial<AuthorMessageBatch[]>;
+  message: Partial<TextMessageBatch[]>;
+  likes: Partial<LikesMessageBatch[]>;
 };
 
 @Injectable()
@@ -28,6 +34,22 @@ export class MessageBatchService {
     message: this.textBatchRepo,
     likes: this.likesBatchRepo,
   };
+
+  async findByLatestActionId(latestActionId: number): Promise<NewBatchDTO> {
+    const result = { author: [], message: [], likes: [] };
+    Object.keys(this.batchMapper).forEach(async (key) => {
+      const repository = this.batchMapper[key];
+      result[key] = await repository.find({
+        order: { messageCreateActionId: 'DESC' },
+        where: {
+          isLatest: true,
+          messageCreateActionId: LessThanOrEqual(latestActionId),
+        },
+        select: ['messageCreateActionId', 'updatedValue'],
+      });
+    });
+    return result;
+  }
 
   async create(dto: MessageBatchCreateDTO) {
     const { batchType, updatedValue, messageCreateActionId, ...batch } = dto;
