@@ -1,19 +1,8 @@
-import { BeforeInsert, Entity } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { MessageBatch } from './message-batch.entity';
 
 @Entity()
 export class TextMessageBatch extends MessageBatch {
+  @Column('varchar', { nullable: true, length: 1024 })
   updatedValue: string;
-
-  @BeforeInsert()
-  async deLatest() {
-    const { messageCreateActionId } = this;
-    const oldBatch = await TextMessageBatch.findOne({
-      isLatest: true,
-      messageCreateActionId,
-    });
-    if (oldBatch) {
-      TextMessageBatch.update(oldBatch.actionId, { isLatest: false });
-    }
-  }
 }

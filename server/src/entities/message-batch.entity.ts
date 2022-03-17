@@ -7,7 +7,7 @@ export enum UpdatedColumnEnum {
 }
 
 @Entity()
-export class MessageBatch extends BaseEntity {
+export abstract class MessageBatch {
   @PrimaryColumn()
   actionId: number;
 

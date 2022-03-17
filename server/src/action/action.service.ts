@@ -10,8 +10,8 @@ export class ActionService {
     private readonly actionRepo: Repository<Action>,
   ) {}
 
-  create(actionType: ActionEnum): Promise<Action> {
-    const action = this.actionRepo.create({ actionType });
+  create(message: string, actionType: ActionEnum): Promise<Action> {
+    const action = this.actionRepo.create({ message, actionType });
     return this.actionRepo.save(action);
   }
 
