@@ -6,5 +6,4 @@ mode=$(getEnv MODE)
 database=$(getEnv POSTGRES_DATABASE)
 username=$(getEnv POSTGRES_USERNAME)
 export PGPASSWORD=$(getEnv POSTGRES_PASSWORD)
-psql -d $database -U $username < src.$mode.sql
-nest start --watch
+psql -d $database -U $username < src.sql

@@ -1,11 +1,4 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  Index,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { Message } from './message.entity';
+import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum ActionEnum {
   Create = 'create',

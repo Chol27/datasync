@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
+import { InjectConnection } from '@nestjs/typeorm';
 import { ActionService } from 'src/action/action.service';
 import { ActionEnum } from 'src/entities/action.entity';
 import { MessageBatch } from 'src/entities/message-batch.entity';
