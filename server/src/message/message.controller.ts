@@ -6,9 +6,11 @@ import {
   Param,
   Post,
   Put,
+  Res,
 } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { Message } from 'src/entities/message.entity';
+import { Response } from 'express';
 
 @Controller('messages')
 export class MessageController {
@@ -32,7 +34,12 @@ export class MessageController {
   }
 
   @Delete(':uuid')
-  delete(@Param('uuid') uuid: string) {
-    return this.messageService.delete(uuid);
+  async delete(@Param('uuid') uuid: string, @Res() res: Response) {
+    try {
+      await this.messageService.delete(uuid);
+      return res.status(204).json();
+    } catch (error) {
+      throw error;
+    }
   }
 }

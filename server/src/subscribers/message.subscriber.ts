@@ -2,26 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
 import { ActionService } from 'src/action/action.service';
 import { ActionEnum } from 'src/entities/action.entity';
-import { AuthorMessageBatch } from 'src/entities/author-message-batch.entity';
-import { LikesMessageBatch } from 'src/entities/likes-message-batch.entity';
 import { MessageBatch } from 'src/entities/message-batch.entity';
 import { Message } from 'src/entities/message.entity';
-import { TextMessageBatch } from 'src/entities/text-message-batch.entity';
 import { MessageBatchService } from 'src/message-batch/message-batch.service';
 import {
   EntitySubscriberInterface,
   InsertEvent,
   UpdateEvent,
-  getRepository,
   Repository,
   Connection,
+  RemoveEvent,
 } from 'typeorm';
 
-const batchMapper = {
-  author: AuthorMessageBatch,
-  message: TextMessageBatch,
-  likes: LikesMessageBatch,
-};
+const batchTypes = ['author', 'message', 'likes'];
 
 export async function updateLatest(
   repository: Repository<MessageBatch>,
@@ -71,14 +64,24 @@ export class MessageSubscriber implements EntitySubscriberInterface<Message> {
       .map((obj) => {
         return obj.propertyName;
       })
-      .forEach(async (col) => {
+      .forEach((col) => {
         const dto = {
           batchType: col,
           actionId,
           messageCreateActionId: createActionId,
           updatedValue: message[col],
         };
-        await this.messageBatchService.create(dto);
+        this.messageBatchService.create(dto);
       });
+  }
+
+  beforeRemove(event: RemoveEvent<Message>): void {
+    const message = event.entity;
+    const { uuid, createActionId } = message;
+    this.actionService.create(uuid, ActionEnum.Delete);
+    batchTypes.forEach((bt) => {
+      this.messageBatchService.updateLatest(bt, createActionId);
+    });
+    return;
   }
 }

@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  Catch,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -37,12 +36,13 @@ export class MessageService {
     return this.messageRepo.save(message);
   }
 
-  async delete(uuid: string): Promise<void> {
-    const updateResult = await this.messageRepo.delete(uuid);
-    const { affected } = updateResult;
-    if (affected === 0) {
+  async delete(uuid: string): Promise<Message> {
+    const message = await this.findById(uuid);
+    if (!message) {
       throw new NotFoundException();
     }
-    return;
+    console.log('mes', message);
+
+    return this.messageRepo.remove(message);
   }
 }
