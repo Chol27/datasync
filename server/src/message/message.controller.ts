@@ -31,17 +31,8 @@ export class MessageController {
     return this.messageService.update(uuid, dto);
   }
 
-  /*
-   * Below function is for testing purpose.
-   * Need to close @BeforeInsert at MessageEntity before using createMultiple.
-   */
-  @Post('multiple/:iteration')
-  createMultiple(@Param('iteration') iteration: number): Promise<Message[]> {
-    return this.messageService.createMultiple(iteration);
-  }
-
-  @Delete('clear')
-  clearAll(): Promise<void> {
-    return this.messageService.clearAll();
+  @Delete(':uuid')
+  delete(@Param('uuid') uuid: string) {
+    return this.messageService.delete(uuid);
   }
 }

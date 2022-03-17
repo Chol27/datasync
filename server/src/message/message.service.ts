@@ -1,17 +1,18 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Catch,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ActionService } from 'src/action/action.service';
 import { Message } from 'src/entities/message.entity';
-import { ActionEnum } from 'src/entities/action.entity';
 import { Repository } from 'typeorm';
-import { UpdatedColumnEnum } from 'src/entities/message-batch.entity';
 
 @Injectable()
 export class MessageService {
   constructor(
     @InjectRepository(Message)
     private readonly messageRepo: Repository<Message>,
-    private readonly actionService: ActionService,
   ) {}
 
   findAll(): Promise<Message[]> {
@@ -36,35 +37,12 @@ export class MessageService {
     return this.messageRepo.save(message);
   }
 
-  /*
-   * Below function is for testing purpose.
-   *
-   */
-
-  async createByActionId(): Promise<Message> {
-    const action = await this.actionService.create(ActionEnum.Create);
-    const { id } = action;
-    const uuid = id.toString();
-    const message = await this.create({
-      uuid: uuid,
-      author: 'author' + uuid,
-      message: 'messages' + uuid,
-      likes: id,
-      latestAction: action,
-      createActionId: action.id,
-    });
-    return message;
-  }
-
-  async createMultiple(iteration: number): Promise<any> {
-    const messages = [];
-    for (let i = 0; i < iteration; i++) {
-      messages.push(await this.createByActionId());
+  async delete(uuid: string): Promise<void> {
+    const updateResult = await this.messageRepo.delete(uuid);
+    const { affected } = updateResult;
+    if (affected === 0) {
+      throw new NotFoundException();
     }
-    return messages;
-  }
-
-  clearAll(): Promise<void> {
-    return this.messageRepo.clear();
+    return;
   }
 }
