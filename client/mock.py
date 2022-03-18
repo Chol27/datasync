@@ -29,15 +29,19 @@ while True:
 
     if method == 'update':
         latest += size
+        author = 0
+        message = 0
         select = np.random.choice(np.arange(start, end), size, replace=False)
         for row in select:
             data = df.iloc[row]
             uuid = data['uuid']
             obj = data[['author', 'message', 'likes']].to_dict()
             if row%3 == 0:
-                obj['author'] = 'updatedAuthor'
+                obj['author'] = 'updatedAuthor' + str(author)
+                author += 1
             elif row%3 == 1:
-                obj['message'] = 'updatedMessage'
+                obj['message'] = 'updatedMessage' + str(message)
+                message += 1
             else:
                 obj['likes'] += 5
             requests.put(urljoin(baseUrl, uuid), data=obj)
@@ -87,6 +91,6 @@ while True:
 
         print('dff', dff.shape)
         print('dff2', dff2.shape)
-        print('Compare result:', (dff == dff2).all())
+        print('Compare result:', ((dff == dff2).all().sum() == 4))
         
         dff.to_csv(fn)
