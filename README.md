@@ -1,14 +1,14 @@
-midterm project optimization for data sync
+## midterm project optimization for data sync
 
 to run this in your local server you can run
 
-`source ./.setup`
+`source .setup`
 
 #
 
 For database there are some shorthand provided in database folder by run
 
-`source ./.source`
+`source .source`
 
 then you will got following command alias
 
