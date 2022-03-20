@@ -1,3 +1,4 @@
 seed.csv
 *.backup.sql
 .env
+appdata.db
