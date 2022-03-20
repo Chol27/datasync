@@ -61,11 +61,13 @@ export class MessageSubscriber implements EntitySubscriberInterface<Message> {
     message.latestAction = action;
 
     const actionId = action.id;
+    const oldMessage = event.databaseEntity;
     const { updatedColumns } = event;
     updatedColumns
       .map((obj) => {
         return obj.propertyName;
       })
+      .filter((col) => oldMessage[col].toString() !== message[col].toString())
       .forEach((col) => {
         const dto = {
           batchType: col,
