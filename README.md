@@ -23,3 +23,5 @@ then you will got following command alias
 In client you can run `python3 mock.py` which would insert data from `seed.csv`
 
 Please note that this is uncompletely version so you need to load `init.sql` everytimes you end this client and want to use again.
+
+For client using in baseline test you can run `python3 online.py {filename.csv}` 
