@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AuthorMessageBatch } from 'src/entities/author-message-batch.entity';
 import { LikesMessageBatch } from 'src/entities/likes-message-batch.entity';
 import { TextMessageBatch } from 'src/entities/text-message-batch.entity';
-import { LessThanOrEqual, Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 
 export type MessageBatchCreateDTO = {
   batchType: string;
@@ -35,20 +35,27 @@ export class MessageBatchService {
     likes: this.likesBatchRepo,
   };
 
-  async findByLatestActionId(latestActionId: number): Promise<NewBatchDTO> {
-    const result = { author: [], message: [], likes: [] };
-    Object.keys(this.batchMapper).forEach(async (key) => {
-      const repository = this.batchMapper[key];
-      result[key] = await repository.find({
-        order: { messageCreateActionId: 'DESC' },
-        where: {
-          isLatest: true,
-          messageCreateActionId: LessThanOrEqual(latestActionId),
-        },
-        select: ['messageCreateActionId', 'updatedValue'],
-      });
-    });
-    return result;
+  async findByLatestActionId(latestActionId: number): Promise<any> {
+    const entries = await Promise.all(
+      Object.entries(this.batchMapper).map(async ([batchType, repository]) => {
+        const orderedBatchQuery = repository
+          .createQueryBuilder('batch')
+          // .select(`aa.message_create_action_id, aa.updated_value`)
+          .select('batch.actionId', 'actionId')
+          .addSelect('batch.messageCreateActionId', 'messageCreateActionId')
+          .addSelect('batch.updatedValue', 'updatedValue')
+          .where('batch.isLatest=TRUE')
+          .orderBy({
+            'batch.actionId': 'DESC',
+            'batch.messageCreateActionId': 'ASC',
+          })
+          .getQuery();
+        // typeorm is incompatible with postgres?
+        const query = `SELECT * FROM (${orderedBatchQuery})ob WHERE ob."actionId" > ${latestActionId} AND ob."messageCreateActionId" <= ${latestActionId};`;
+        return [batchType, await getConnection().query(query)];
+      }),
+    );
+    return Object.fromEntries(entries);
   }
 
   async create(dto: MessageBatchCreateDTO) {
