@@ -6,6 +6,9 @@ import pandas as pd
 baseUrl = 'http://localhost:4000/api/messages/'
 
 df = pd.read_csv('seed.csv')
+
+df.iloc[:10000].to_csv('s.csv')
+
 start = 0
 end = 0
 latest = 0
@@ -31,6 +34,7 @@ while True:
         latest += size
         author = 0
         message = 0
+        r3 = 0
         select = np.random.choice(np.arange(start, end), size, replace=False)
         for row in select:
             data = df.iloc[row]
@@ -43,20 +47,22 @@ while True:
                 obj['message'] = 'updatedMessage' + str(message)
                 message += 1
             else:
-                obj['likes'] += 5
+                obj['likes'] = int(obj['likes']) + 5
             requests.put(urljoin(baseUrl, uuid), data=obj)
 
     if method == 'delete':
+        delete_random_size = int(input('delete amount:'))
+        select = np.random.choice(np.arange(start, start + delete_random_size), size, replace=False)
         latest += size
         for row in range(start, size):
             uuid = df.iloc[row]['uuid']
             requests.delete(urljoin(baseUrl, uuid))
-        start += size
+        start += delete_random_size
 
     if method == 'getAll':
         user_latest = latest
         response = requests.get(baseUrl).json()
-        dff = pd.DataFrame(response)
+        dff = pd.DataFrame(response['message'])
         dff = dff.set_index('createActionId')
         dff.to_csv(input('filename:'))
         
@@ -86,7 +92,7 @@ while True:
         dff = dff.drop(deletedCreateActionIds, errors='ignore')
 
         response = requests.get(baseUrl).json()
-        dff2 = pd.DataFrame(response)
+        dff2 = pd.DataFrame(response['message'])
         dff2 = dff2.set_index('createActionId')
 
         print('dff', dff.shape)

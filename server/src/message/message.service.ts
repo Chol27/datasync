@@ -16,10 +16,16 @@ import {
 } from 'src/message-batch/message-batch.service';
 import { MoreThan, Repository } from 'typeorm';
 
+export type FetchAllDTO = {
+  message: Message[];
+  newLatestActionId: number;
+};
+
 export type NewUpdateDTO = {
   message: Partial<Message[]>;
   batch: NewBatchDTO;
   deletedCreateActionIds: number[];
+  newLatestActionId: number;
 };
 
 @Injectable()
@@ -31,10 +37,13 @@ export class MessageService {
     private readonly actionService: ActionService,
   ) {}
 
-  findAll(): Promise<Message[]> {
-    return this.messageRepo.find({
-      order: { createActionId: 'ASC' },
-    });
+  async findAll(): Promise<FetchAllDTO> {
+    return {
+      message: await this.messageRepo.find({
+        order: { createActionId: 'ASC' },
+      }),
+      newLatestActionId: await this.actionService.getLatestActionId(),
+    };
   }
 
   async findByLatestActionId(latestActionId: number): Promise<NewUpdateDTO> {
@@ -47,7 +56,8 @@ export class MessageService {
     const deletedCreateActionIds = (
       await this.actionService.findDeleteTypeByLatestId(latestActionId)
     ).map((obj) => obj.messageCreateId);
-    return { message, batch, deletedCreateActionIds };
+    const newLatestActionId = await this.actionService.getLatestActionId();
+    return { message, batch, deletedCreateActionIds, newLatestActionId };
   }
 
   async findById(uuid: string): Promise<Message> {

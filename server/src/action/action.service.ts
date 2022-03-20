@@ -19,10 +19,14 @@ export class ActionService {
     return this.actionRepo.update(id, dto);
   }
 
-  findDeleteTypeByLatestId(latestActionId: number) {
+  findDeleteTypeByLatestId(latestActionId: number): Promise<Action[]> {
     return this.actionRepo.find({
       where: { actionType: ActionEnum.Delete, id: MoreThan(latestActionId) },
       select: ['messageCreateId'],
     });
+  }
+
+  getLatestActionId(): Promise<number> {
+    return this.actionRepo.count();
   }
 }

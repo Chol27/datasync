@@ -8,7 +8,7 @@ import {
   Delete,
   Res,
 } from '@nestjs/common';
-import { MessageService, NewUpdateDTO } from './message.service';
+import { FetchAllDTO, MessageService, NewUpdateDTO } from './message.service';
 import { Message } from 'src/entities/message.entity';
 import { Response } from 'express';
 
@@ -16,7 +16,7 @@ import { Response } from 'express';
 export class MessageController {
   constructor(private readonly messageService: MessageService) {}
   @Get()
-  findAll(): Promise<Message[]> {
+  findAll(): Promise<FetchAllDTO> {
     return this.messageService.findAll();
   }
 
