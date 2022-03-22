@@ -14,7 +14,6 @@ export class Action {
   @Column({ nullable: true })
   messageCreateId: number;
 
-  @Index('action_type_idx')
   @Column({ type: 'enum', enum: ActionEnum })
   actionType: ActionEnum;
 }

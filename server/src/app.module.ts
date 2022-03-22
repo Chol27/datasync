@@ -21,7 +21,7 @@ import { MessageBatchModule } from './message-batch/message-batch.module';
       database: process.env.POSTGRES_DATABASE,
       entities: ['dist/**/*.entity{.ts,.js}'],
       migrations: ['dist/migrations/**/*{.js,.ts}'],
-      synchronize: true,
+      synchronize: false,
       namingStrategy: new SnakeNamingStrategy(),
     }),
     MessageModule,

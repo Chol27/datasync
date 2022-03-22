@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Action, ActionEnum } from 'src/entities/action.entity';
-import { MoreThan, Repository, UpdateResult } from 'typeorm';
+import { getConnection, Repository, UpdateResult } from 'typeorm';
 
 @Injectable()
 export class ActionService {
@@ -20,10 +20,17 @@ export class ActionService {
   }
 
   findDeleteTypeByLatestId(latestActionId: number): Promise<Action[]> {
-    return this.actionRepo.find({
-      where: { actionType: ActionEnum.Delete, id: MoreThan(latestActionId) },
-      select: ['messageCreateId'],
-    });
+    const orderedActionQuery = this.actionRepo
+      .createQueryBuilder('action')
+      .select('action.id, action.messageCreateId')
+      .orderBy({
+        'action.id': 'DESC',
+        'action.messageCreateId': 'ASC',
+      })
+      .getQuery();
+    // typeorm is incompatible with postgres?
+    const query = `SELECT ob.message_create_id FROM (${orderedActionQuery})ob WHERE ob."id" > ${latestActionId} AND ob."message_create_id" <= ${latestActionId};`;
+    return getConnection().query(query);
   }
 
   getLatestActionId(): Promise<number> {

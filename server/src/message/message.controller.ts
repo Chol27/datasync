@@ -7,6 +7,7 @@ import {
   Put,
   Delete,
   Res,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { FetchAllDTO, MessageService, NewUpdateDTO } from './message.service';
 import { Message } from 'src/entities/message.entity';
@@ -19,6 +20,37 @@ export class MessageController {
   findAll(): Promise<FetchAllDTO> {
     return this.messageService.findAll();
   }
+
+  @Get('partition/:skip/:take')
+  partitionFindAll(
+    @Param('skip', ParseIntPipe) skip: number,
+    @Param('take', ParseIntPipe) take: number,
+  ): Promise<Message[]> {
+    return this.messageService.partitionFindAll(skip, take);
+  }
+
+  // @Get('test/:size')
+  // testFindAll(@Param('size', ParseIntPipe) size: number): Promise<any> {
+  //   console.log('nm', typeof size);
+  //   return this.messageService
+  //     .testFindAll(size)
+  //     .then((dt) => {
+  //       console.log('size', dt.message.length);
+  //       return { message: 'success' };
+  //     })
+  //     .catch((err) => {
+  //       console.log('err', err);
+  //       return { message: 'error' };
+  //     });
+  // }
+
+  // @Get('test2/:take/:max')
+  // testFindAll2(
+  //   @Param('take', ParseIntPipe) take: number,
+  //   @Param('max', ParseIntPipe) max: number,
+  // ): Promise<any> {
+  //   return this.messageService.testFindAll2(take, max);
+  // }
 
   @Get(':latestActionId')
   findByLatestActionId(

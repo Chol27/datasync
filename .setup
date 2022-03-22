@@ -18,6 +18,9 @@ POSTGRES_DATABASE=$POSTGRES_DATABASE" > .env
 source ./script/.init
 source ./script/.set-index
 
+cd ../client
+sqlite3 appdata.db < sqlitedump.sql
+
 cd ../server
 echo -n "SERVER_PORT="
 read SERVER_PORT
