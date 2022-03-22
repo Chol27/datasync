@@ -1,5 +1,7 @@
 ## midterm project optimization for data sync
 
+This github belong to Chonlakorn Maturosjamnan 6230096621
+
 to run this in your local server you can run
 
 `source .setup`
