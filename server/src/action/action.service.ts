@@ -22,14 +22,16 @@ export class ActionService {
   findDeleteTypeByLatestId(latestActionId: number): Promise<Action[]> {
     const orderedActionQuery = this.actionRepo
       .createQueryBuilder('action')
-      .select('action.id, action.messageCreateId')
+      .select('action.id', 'id')
+      .addSelect('action.messageCreateId', 'messageCreateId')
       .orderBy({
         'action.id': 'DESC',
         'action.messageCreateId': 'ASC',
       })
       .getQuery();
+    console.log('qr', orderedActionQuery);
     // typeorm is incompatible with postgres?
-    const query = `SELECT ob.message_create_id FROM (${orderedActionQuery})ob WHERE ob."id" > ${latestActionId} AND ob."message_create_id" <= ${latestActionId};`;
+    const query = `SELECT ob."messageCreateId" FROM (${orderedActionQuery})ob WHERE ob."id" > ${latestActionId} AND ob."messageCreateId" <= ${latestActionId};`;
     return getConnection().query(query);
   }
 
