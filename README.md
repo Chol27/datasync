@@ -1,6 +1,8 @@
 ## midterm project optimization for data sync
 
-This github belong to Chonlakorn Maturosjamnan 6230096621
+This github belong to Chonlakornn
+
+bye bye 75 score TT: https://github.com/Chol27/datasync/commit/6a0efd01dc3ea5269896c98a9259c7a6730f8195
 
 to run this in your local server you can run
 
