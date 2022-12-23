@@ -1,8 +1,14 @@
 ## midterm project optimization for data sync
 
-This github belong to Chonlakornn
+This project is try to optimize speed and network load in data transfer.
 
-bye bye 75 score TT: https://github.com/Chol27/datasync/commit/6a0efd01dc3ea5269896c98a9259c7a6730f8195
+The experiment example is psuedo-discord which users could send only text messages, update and delete their messages.
+
+The problem is to optimize speed and network load in data transfer when the user syncing new message to their device.
+
+For implementation details you could visit `report_Chonlakorn.pdf` or `Midterm Presentation.pdf`
+
+## How to run
 
 to run this in your local server you can run
 
